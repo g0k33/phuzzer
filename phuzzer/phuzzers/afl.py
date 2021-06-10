@@ -244,8 +244,11 @@ class AFL(Phuzzer):
                     continue
 
                 crash_path = os.path.join(crashes_dir, crash)
-                with open(crash_path, 'rb') as f:
-                    crashes.add(f.read())
+                try:
+                    with open(crash_path, 'rb') as f:
+                        crashes.add(f.read())
+                except FileNotFoundError:
+                    pass
 
         return list(crashes)
 
