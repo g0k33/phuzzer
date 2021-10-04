@@ -330,7 +330,7 @@ class AFL(Phuzzer):
 
         f.kill()
 
-    def crashes(self, signals=(signal.SIGSEGV, signal.SIGILL)):
+    def crashes(self, signals=(signal.SIGSEGV, signal.SIGILL, signal.SIGFPE, signal.SIGABRT)):
         """
         Retrieve the crashes discovered by AFL. Since we are now detecting flag
         page leaks (via SIGUSR1) we will not return these leaks as crashes.
