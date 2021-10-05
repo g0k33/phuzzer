@@ -10,7 +10,7 @@ from collections import defaultdict
 class Reporter(Thread):
     DETAIL_FREQ = 1
 
-    def __init__(self, binary, reportdir, afl_cores, first_crash, timeout,  work_dir, testversion=""):
+    def __init__(self, binary, reportdir, afl_cores, first_crash, timeout, work_dir, testversion=""):
         Thread.__init__(self)
         self.binary = binary
         self.reportdir = reportdir
@@ -24,20 +24,22 @@ class Reporter(Thread):
         self.summary_fn = f"{reportdir}/run_summary.txt"
 
         if not os.path.exists(self.details_fn):
-            open(self.details_fn, "w").write('Date\tTime\tBinary\tTarget\tElapsed\tCores\tExecs\tExec/sec\tCycles\tPaths\tCrashes\tReason\tTestVer\n')
+            open(self.details_fn, "w").write(
+                'Date\tTime\tBinary\tTarget\tElapsed\tCores\tExecs\tExec/sec\tCycles\tPaths\tCrashes\tReason\tTestVer\n')
 
         if not os.path.exists(self.summary_fn):
-            open(self.summary_fn, "w").write('Date\tTime\tBinary\tTarget\tElapsed\tCores\tExecs\tExec/sec\tCycles\tPaths\tCrashes\tReason\tTestVer\n')
+            open(self.summary_fn, "w").write(
+                'Date\tTime\tBinary\tTarget\tElapsed\tCores\tExecs\tExec/sec\tCycles\tPaths\tCrashes\tReason\tTestVer\n')
 
         self.start_time = time.time()
         self.statement_cnt = 0
         self.get_fuzzer_stats()
-        self.keepgoing=True
+        self.keepgoing = True
         self.summary_stats = defaultdict(lambda: 0)
         self.last_printed_crashes = self.summary_stats["unique_crashes"]
         self.last_printed_paths_total = self.summary_stats["paths_total"]
-        self._crash_seen=False
-        self._timeout_reached=False
+        self._crash_seen = False
+        self._timeout_reached = False
         self.statement_cnt = 0
         self.do_printing = False
         self.elapsed_time = 0
@@ -127,9 +129,10 @@ class Reporter(Thread):
         else:
             run_until_str = "until stopped by you "
 
-        outstr =  f'[*] {self.afl_cores} fuzzers running {run_until_str}{timeout_str}completed '
+        outstr = f'[*] {self.afl_cores} fuzzers running {run_until_str}{timeout_str}completed '
         outstr += f'{self.summary_stats["execs_done"]} at {self.summary_stats["execs_per_sec"]} execs/sec '
-        outstr += f'with {self.summary_stats["cycles_done"]} cycles finding {self.summary_stats["paths_total"]} paths and '
+        outstr += f'with {self.summary_stats["cycles_done"]} cycles finding {self.summary_stats["paths_total"]} paths ' \
+                  f'and '
         outstr += f'\033[32;5;3m{self.summary_stats["unique_crashes"]} crashes \033[0m'
 
         if self.last_printed_crashes != self.summary_stats["unique_crashes"] or mandatory_print or (
@@ -149,7 +152,7 @@ class Reporter(Thread):
         self.build_report_stats()
         self.statement_cnt += 1
         if self.statement_cnt % Reporter.DETAIL_FREQ == 0 or mandatory_record:
-            with open(self.details_fn, "a+") as fp :
+            with open(self.details_fn, "a+") as fp:
                 fp.write(self.build_report_stats() + "\n")
 
         if self.do_printing:
@@ -178,7 +181,7 @@ class Reporter(Thread):
             fp.write(run_results + "\n")
 
     def stop(self):
-        end_reason=""
+        end_reason = ""
         if self.first_crash:
             end_reason = "First Crash"
 
