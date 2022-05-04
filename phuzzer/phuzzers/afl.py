@@ -132,6 +132,18 @@ class AFL(Phuzzer):
                     s_val = hexescape(s)
                     df.write("string_%d=\"%s\"" % (i, s_val) + "\n")
 
+        # check for lines with more than 128B
+        with open(self.dictionary_file, "r") as df:
+            str = df.readlines()
+            df.close()
+        with open(self.dictionary_file, "w") as df:
+            for x in range(0, len(str)):
+                if len(str[x]) > 128:
+                    pass
+                else:
+                    df.write(str[x])
+            df.close()
+
         # write the seeds
         if self.in_dir != "-":
             if not self.seeds:
