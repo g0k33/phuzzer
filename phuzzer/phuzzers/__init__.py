@@ -35,6 +35,7 @@ class Phuzzer:
     AFL = "AFL"
     AFL_IJON = "AFL_IJON"
     AFL_PLUSPLUS = "AFL++"
+    AFL_EMS = "EMS"
 
     qemu_arch_name = ""
     afl_bin_dir = None
@@ -94,6 +95,9 @@ class Phuzzer:
         elif classtype == Phuzzer.AFL_PLUSPLUS:
             from .afl_plusplus import AFLPlusPlus
             return AFLPlusPlus(**kwargs)
+        elif classtype == Phuzzer.AFL_EMS:
+            from .afl_ems import EMS
+            return EMS(**kwargs)
         else:
             raise ValueError(f"Fuzzer type {classtype} is not found.")
 
@@ -138,9 +142,13 @@ class Phuzzer:
     @staticmethod
     def init_afl_config(binary_path, is_multicb=False):
         """
-        Returns AFL_PATH and AFL_DIR, if AFL_PATH is set in os.environ it returns that, if not it attempts to auto-detect
+        Returns AFL_PATH and AFL_DIR, if AFL_PATH is set in os.environ it returns that, if not it attempts to
+        auto-detect
         :param binary_path:
-        :return: afl_path_var, afl_dir, qemu_arch_name: afl_path_var is location of qemu_trace to use, afl_dir is the location of the afl binaries, qemu_arch_name is the name of the binary's architecture
+        :param is_multicb:
+        :return: afl_path_var, afl_dir, qemu_arch_name:
+        afl_path_var is location of qemu_trace to use, afl_dir is the location of the afl binaries, qemu_arch_name is
+        the name of the binary's architecture
         """
 
         if Phuzzer.afl_bin_dir is not None:
