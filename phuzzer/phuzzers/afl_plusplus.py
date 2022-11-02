@@ -11,6 +11,7 @@ class AFLPlusPlus(AFL):
         Paper found here:
         https://aflplus.plus//papers/aflpp-woot2020.pdf
     """
+
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
@@ -20,7 +21,6 @@ class AFLPlusPlus(AFL):
         return afl_bin_path
 
     def _start_afl_instance(self, instance_cnt=0):
-
         args, fuzzer_id = self.build_args()
         my_env = os.environ.copy()
 
@@ -28,8 +28,10 @@ class AFLPlusPlus(AFL):
             core_num = int(my_env["AFL_SET_AFFINITY"])
             core_num += instance_cnt
             print(args)
-            args = [args[0]] + [f"-b {core_num}"] + args[1:]
-
+            args = [args[0]] + [f"-b {core_num} -D"] + args[1:]
+        else:
+            # add bit flipping by default
+            args = [args[0]] + ["-D"] + args[1:]
 
         self.log_command(args, fuzzer_id, my_env)
 
@@ -38,4 +40,3 @@ class AFLPlusPlus(AFL):
 
         with open(logpath, "w") as fp:
             return subprocess.Popen(args, stdout=fp, stderr=fp, close_fds=True, env=my_env)
-
