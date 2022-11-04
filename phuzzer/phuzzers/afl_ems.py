@@ -26,11 +26,12 @@ class EMS(AFL):
         my_env = os.environ.copy()
 
         if "AFL_SET_AFFINITY" in my_env:
-            l.warning("EMS does not support binding to specific cores, skipping....")
-            # core_num = int(my_env["AFL_SET_AFFINITY"])
-            # core_num += instance_cnt
-            # print(args)
-            # args = [args[0]] + [f"-b {core_num}"] + args[1:]
+            # Core binding is supported in https://github.com/g0kkk/EMS-bind
+            l.warning("EMS core binding supported by another repo")
+            core_num = int(my_env["AFL_SET_AFFINITY"])
+            core_num += instance_cnt
+            print(args)
+            args = [args[0]] + [f"-b {core_num}"] + args[1:]
 
         logpath = os.path.join(self.work_dir, fuzzer_id + ".log")
         l.debug("execing: %s > %s", ' '.join(args), logpath)
