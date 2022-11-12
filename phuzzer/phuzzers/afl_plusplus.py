@@ -27,8 +27,8 @@ class AFLPlusPlus(AFL):
         if "AFL_SET_AFFINITY" in my_env:
             core_num = int(my_env["AFL_SET_AFFINITY"])
             core_num += instance_cnt
+            args = [args[0]] + [f"-b {core_num}"] + ["-D"] + args[1:]
             print(args)
-            args = [args[0]] + [f"-b {core_num} -D"] + args[1:]
         else:
             # add bit flipping by default
             args = [args[0]] + ["-D"] + args[1:]
