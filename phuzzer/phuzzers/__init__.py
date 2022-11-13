@@ -38,6 +38,7 @@ class Phuzzer:
     AFL = "AFL"
     AFL_IJON = "AFL_IJON"
     AFL_PLUSPLUS = "AFL++"
+    AFL_EMS = "EMS"
 
     qemu_arch_name = ""
     afl_bin_dir = None
@@ -97,6 +98,9 @@ class Phuzzer:
         elif classtype == Phuzzer.AFL_PLUSPLUS:
             from .afl_plusplus import AFLPlusPlus
             return AFLPlusPlus(**kwargs)
+        elif classtype == Phuzzer.EMS:
+            from .afl_ems import EMS
+            return EMS(**kwargs)
         else:
             raise ValueError(f"Fuzzer type {classtype} is not found.")
 
