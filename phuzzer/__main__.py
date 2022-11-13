@@ -100,17 +100,17 @@ def main():
     #             with open(filepath, 'rb') as seedfile:
     #                 seeds.append(seedfile.read())
 
-    if args.dictionary:
-        built_dict = open(args.dictionary,"rb").read().split(b"\n")
-    else:
-        built_dict = None
+    # if args.dictionary:
+    #     built_dict = open(args.dictionary,"rb").read().split(b"\n")
+    # else:
+    #     built_dict = None
 
     print ("[*] Creating fuzzer...")
     fuzzer = Phuzzer.phactory(phuzzer_type=args.phuzzer_type,
                               target=args.binary, work_dir=args.work_dir, seeds=args.seed_dir, afl_count=args.afl_cores,
                               create_dictionary=not args.no_dictionary, timeout=args.timeout,
-                              memory=args.memory, run_timeout=args.run_timeout, dictionary=built_dict, use_qemu=args.use_qemu,
-                              resume=args.resume, target_opts=args.target_opts
+                              memory=args.memory, run_timeout=args.run_timeout, dictionary=args.dictionary,
+                              use_qemu=args.use_qemu, resume=args.resume, target_opts=args.target_opts
                               )
 
     # start it!
