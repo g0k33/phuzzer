@@ -27,7 +27,6 @@ class AFLPlusPlus(AFL):
         if "AFL_SET_AFFINITY" in my_env:
             core_num = int(my_env["AFL_SET_AFFINITY"])
             core_num += instance_cnt
-            print(args)
             args = [args[0]] + [f"-b {core_num}"] + ["-D"] + args[1:]
         else:
             # add bit flipping by default
@@ -36,7 +35,18 @@ class AFLPlusPlus(AFL):
         self.log_command(args, fuzzer_id, my_env)
 
         logpath = os.path.join(self.work_dir, fuzzer_id + ".log")
-        l.debug("execing: %s > %s", ' '.join(args), logpath)
+        print("execing: %s > %s", ' '.join(args), logpath)
+        l.warning("execing: %s > %s", ' '.join(args), logpath)
+
+        scr_fn = os.path.join(self.work_dir, f"fuzz-{instance_cnt}.sh")
+        with open(scr_fn, "w") as scr:
+            scr.write("#! /bin/bash \n")
+            for key, val in my_env.items():
+                scr.write(f'export {key}="{val}"\n')
+            scr.write(" ".join(args) + "\n")
+        print(f"Fuzz command written out to {scr_fn}")
+
+        os.chmod(scr_fn, mode=0o774)
 
         with open(logpath, "w") as fp:
-            return subprocess.Popen(args, stdout=fp, stderr=fp, close_fds=True, env=my_env)
+            return subprocess.Popen([scr_fn], stdout=fp, stderr=fp, close_fds=True)
