@@ -88,17 +88,17 @@ def main():
         else drill_extension or grease_extension
     )
 
-    seeds = None
-    if args.seed_dir:
-        seeds = []
-        print ("[*] Seeding...")
-        for dirpath in args.seed_dir:
-            for filename in os.listdir(dirpath):
-                filepath = os.path.join(dirpath, filename)
-                if not os.path.isfile(filepath):
-                    continue
-                with open(filepath, 'rb') as seedfile:
-                    seeds.append(seedfile.read())
+    # seeds = None
+    # if args.seed_dir:
+    #     seeds = []
+    #     print ("[*] Seeding...")
+    #     for dirpath in args.seed_dir:
+    #         for filename in os.listdir(dirpath):
+    #             filepath = os.path.join(dirpath, filename)
+    #             if not os.path.isfile(filepath):
+    #                 continue
+    #             with open(filepath, 'rb') as seedfile:
+    #                 seeds.append(seedfile.read())
 
     if args.dictionary:
         built_dict = open(args.dictionary,"rb").read().split(b"\n")
@@ -107,7 +107,7 @@ def main():
 
     print ("[*] Creating fuzzer...")
     fuzzer = Phuzzer.phactory(phuzzer_type=args.phuzzer_type,
-                              target=args.binary, work_dir=args.work_dir, seeds=seeds, afl_count=args.afl_cores,
+                              target=args.binary, work_dir=args.work_dir, seeds=args.seed_dir, afl_count=args.afl_cores,
                               create_dictionary=not args.no_dictionary, timeout=args.timeout,
                               memory=args.memory, run_timeout=args.run_timeout, dictionary=built_dict, use_qemu=args.use_qemu,
                               resume=args.resume, target_opts=args.target_opts

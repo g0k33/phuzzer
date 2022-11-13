@@ -1,4 +1,4 @@
-import distutils.spawn #pylint:disable=no-name-in-module,import-error
+import distutils.spawn  # pylint:disable=no-name-in-module,import-error
 import subprocess
 import traceback
 import logging
@@ -7,22 +7,25 @@ import time
 import sys
 import os
 import re
+
 try:
     import angr
+
     ANGR_INSTALLED = True
 except ImportError:
     ANGR_INSTALLED = False
 try:
     import shellphish_afl
+
     SHELLPHISH_AFL_INSTALLED = True
 except ImportError:
     SHELLPHISH_AFL_INSTALLED = False
 try:
     import elftools
+
     ELFTOOLS_INSTALLED = True
 except ImportError:
     ELFTOOLS_INSTALLED = False
-
 
 l = logging.getLogger("phuzzer.phuzzers")
 
@@ -51,10 +54,10 @@ class Phuzzer:
         self.target = target
         self.target_os = ""
         self.target_qemu_arch = ""
-        self.seeds = seeds or [ ]
+        self.seeds = seeds or []
 
         # processes spun up
-        self.processes            = [ ]
+        self.processes = []
 
         self.start_time = None
         self.end_time = None
@@ -124,6 +127,7 @@ class Phuzzer:
     def start(self):
         self.start_time = int(time.time())
         return self
+
     __enter__ = start
 
     def stop(self):
@@ -133,6 +137,7 @@ class Phuzzer:
         for p in self.processes:
             p.terminate()
             p.wait()
+
     __exit__ = stop
 
     @staticmethod
@@ -227,7 +232,7 @@ class Phuzzer:
             tmp += "###############################################################################\n"
             tmp += "###############################################################################\n"
             e.args = (tmp,)
-            xmsg = distutils.spawn.find_executable("xmessage") #pylint:disable=no-member
+            xmsg = distutils.spawn.find_executable("xmessage")  # pylint:disable=no-member
             if xmsg:
                 subprocess.Popen([xmsg, tmp]).wait()
             l.critical(tmp)
@@ -235,7 +240,6 @@ class Phuzzer:
             sys.stderr.write(tmp)
             sys.stdout.write(tmp)
             raise
-
 
     #
     # Dictionary creation
@@ -281,7 +285,6 @@ class Phuzzer:
         strings = [] if len(string_references) == 0 else list(list(zip(*string_references))[1])
         return strings
 
-
     #
     # Subclasses should override this.
     #
@@ -324,5 +327,6 @@ class Phuzzer:
 
     def __del__(self):
         self.stop()
+
 
 from ..errors import InstallError

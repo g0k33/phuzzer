@@ -11,7 +11,6 @@ import shutil
 import glob
 import os
 
-
 l = logging.getLogger("phuzzer.phuzzers.afl")
 l.setLevel(logging.INFO)
 
@@ -20,12 +19,12 @@ class AFL(Phuzzer):
     """ Phuzzer object, spins up a fuzzing job on a binary """
 
     def __init__(
-        self, target, seeds=None, dictionary=None, create_dictionary=None,
-        work_dir=None, seeds_dir=None, resume=False,
-        afl_count=1, memory="8G", timeout=None,
-        library_path=None, target_opts=None, extra_opts=None,
-        crash_mode=False, use_qemu=True,
-        run_timeout=None
+            self, target, seeds=None, dictionary=None, create_dictionary=None,
+            work_dir=None, seeds_dir=None, resume=False,
+            afl_count=1, memory="8G", timeout=None,
+            library_path=None, target_opts=None, extra_opts=None,
+            crash_mode=False, use_qemu=True,
+            run_timeout=None
     ):
         """
         :param target: path to the binary to fuzz. List or tuple for multi-CB.
@@ -50,7 +49,8 @@ class AFL(Phuzzer):
         :param run_timeout: amount of time for AFL to wait for a single execution to finish
 
         """
-        super().__init__(target=target, seeds=seeds, dictionary=dictionary, create_dictionary=create_dictionary, timeout=timeout)
+        super().__init__(target=target, seeds=seeds, dictionary=dictionary, create_dictionary=create_dictionary,
+                         timeout=timeout)
 
         self.work_dir = work_dir or os.path.join("/tmp", "phuzzer", os.path.basename(str(target)))
         if resume and os.path.isdir(self.work_dir):
@@ -63,15 +63,16 @@ class AFL(Phuzzer):
             with contextlib.suppress(FileExistsError):
                 os.makedirs(self.in_dir)
 
-        self.afl_count      = afl_count
-        self.memory         = memory
+        self.afl_count = afl_count
+        self.memory = memory
 
-        self.library_path   = library_path
-        self.target_opts    = target_opts or [ ]
-        self.extra_opts     = extra_opts if type(extra_opts) is list else extra_opts.split() if type(extra_opts) is str else [ ]
+        self.library_path = library_path
+        self.target_opts = target_opts or []
+        self.extra_opts = extra_opts if type(extra_opts) is list else extra_opts.split() if type(
+            extra_opts) is str else []
 
-        self.crash_mode     = crash_mode
-        self.use_qemu       = use_qemu
+        self.crash_mode = crash_mode
+        self.use_qemu = use_qemu
 
         self.run_timeout = run_timeout
 
@@ -126,7 +127,7 @@ class AFL(Phuzzer):
         # write the dictionary
         if self.dictionary:
             with open(self.dictionary_file, "w") as df:
-                for i,s in enumerate(set(self.dictionary)):
+                for i, s in enumerate(set(self.dictionary)):
                     if len(s) == 0:
                         continue
                     s_val = hexescape(s)
@@ -148,13 +149,16 @@ class AFL(Phuzzer):
         if self.in_dir != "-":
             if not self.seeds:
                 l.warning("No seeds provided - using 'fuzz'")
-            template = os.path.join(self.in_dir, "seed-%d")
-            for i, seed in enumerate(self.seeds or [ b"fuzz" ]):
-                with open(template % i, "wb") as f:
-                    f.write(seed)
+                template = os.path.join(self.in_dir, "seed-%d")
+                for i, seed in enumerate(self.seeds or [b"fuzz"]):
+                    with open(template % i, "wb") as f:
+                        f.write(seed)
+            else:
+                l.warning("using default seed dir")
+                self.in_dir = self.seeds[0]
 
         # spin up the master AFL instance
-        master = self._start_afl_instance() # the master fuzzer
+        master = self._start_afl_instance()  # the master fuzzer
         self.processes.append(master)
 
         # only spins up an AFL instances if afl_count > 1
@@ -213,10 +217,10 @@ class AFL(Phuzzer):
                                 try:
 
                                     key, val = stat.split(":")
-                                except :
+                                except:
                                     index = stat.find(":")
                                     key = stat[:index]
-                                    val = stat[index+1:]
+                                    val = stat[index + 1:]
 
                             else:
                                 print(f"Skipping stat '${stat}' in \n${stat_lines} because no split value")
@@ -367,7 +371,7 @@ class AFL(Phuzzer):
         queue_path = os.path.join(self.work_dir, fuzzer, 'queue')
         queue_files = list(filter(lambda x: x != ".state", os.listdir(queue_path)))
 
-        queue_l = [ ]
+        queue_l = []
         for q in queue_files:
             with open(os.path.join(queue_path, q), 'rb') as f:
                 queue_l.append(f.read())
@@ -393,7 +397,6 @@ class AFL(Phuzzer):
 
             pollen_cnt += 1
 
-
     #
     # AFL launchers
     #
@@ -417,8 +420,8 @@ class AFL(Phuzzer):
             fuzzer_id = "fuzzer-%d" % len(self.processes)
             args += ["-S", fuzzer_id]
 
-        if os.path.exists(self.dictionary_file):
-            args += ["-x", self.dictionary_file]
+        if os.path.exists(self.dictionary):
+            args += ["-x", self.dictionary]
 
         args += self.extra_opts
 
@@ -429,7 +432,7 @@ class AFL(Phuzzer):
         target_opts = []
 
         for op in self.target_opts:
-            target_opts.append(op.replace("~~", "--").replace("~","-"))
+            target_opts.append(op.replace("~~", "--").replace("~", "-"))
 
         args += target_opts
 
@@ -510,4 +513,3 @@ class AFL(Phuzzer):
         afl_bin = os.path.join(afl_dir, "afl-fuzz")
         print(f"afl_bin={afl_bin}")
         return afl_bin
-
