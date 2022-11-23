@@ -252,13 +252,11 @@ class AFL(Phuzzer):
                 if not os.path.isdir(crash_dir):
                     # if this entry doesn't have a crashes directory, just skip it
                     continue
-                try:
-                    for crash in os.listdir(crash_dir):
-                        if crash == "README.txt":
-                            # skip the readme entry
-                            continue
-                except FileNotFoundError:
-                    pass
+
+                for crash in os.listdir(crash_dir):
+                    if crash == "README.txt":
+                        # skip the readme entry
+                        continue
 
                     attrs = dict(map(lambda x: (x[0], x[-1]), map(lambda y: y.split(":"), crash.split(","))))
 
