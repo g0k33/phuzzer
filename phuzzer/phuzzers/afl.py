@@ -246,6 +246,9 @@ class AFL(Phuzzer):
         """
 
         crashes = set()
+        sigs = []
+        for x in range(0, len(signals)):
+            sigs.append(signals[x].value)
         for fuzzer in os.listdir(self.work_dir):
             crashes_dir = glob.iglob(f"{self.work_dir}/fuzzer-*/crashes*")
             for crash_dir in crashes_dir:
@@ -260,13 +263,14 @@ class AFL(Phuzzer):
 
                     attrs = dict(map(lambda x: (x[0], x[-1]), map(lambda y: y.split(":"), crash.split(","))))
 
-                    if int(attrs['sig']) not in signals:
+                    if int(attrs['sig']) not in sigs:
                         continue
 
                     crash_path = os.path.join(crash_dir, crash)
                     try:
                         with open(crash_path, 'rb') as f:
                             crashes.add(f.read())
+                            break
                     except FileNotFoundError:
                         pass
 
