@@ -270,7 +270,6 @@ class AFL(Phuzzer):
                     try:
                         with open(crash_path, 'rb') as f:
                             crashes.add(f.read())
-                            break
                     except FileNotFoundError:
                         pass
 
