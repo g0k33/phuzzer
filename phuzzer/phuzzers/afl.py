@@ -247,6 +247,7 @@ class AFL(Phuzzer):
 
         crashes = set()
         sigs = []
+        # take in the values of signals only
         for x in range(0, len(signals)):
             sigs.append(signals[x].value)
         for fuzzer in os.listdir(self.work_dir):
@@ -270,6 +271,7 @@ class AFL(Phuzzer):
                     try:
                         with open(crash_path, 'rb') as f:
                             crashes.add(f.read())
+                            break
                     except FileNotFoundError:
                         pass
 
